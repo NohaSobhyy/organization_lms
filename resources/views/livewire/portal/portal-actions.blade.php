@@ -242,32 +242,27 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane mt-3 fade" id="features" role="tabpanel"
-                                    aria-labelledby="features-tab">
+                                <div class="tab-pane mt-3 fade" id="features" role="tabpanel" aria-labelledby="features-tab">
                                     <div class="row">
                                         <div class="col-12 col-md-6">
                                             <div class="form-check form-check-inline mt-2">
-                                                <form action="{{ route('portal.features.update', $data->id) }}"
-                                                    method="POST">
+                                                <form action="{{ route('portal.features.update', $data->id) }}" method="POST">
                                                     @method('PUT')
                                                     @csrf
-                                                    <input class="form-check-input" name="independent_copyright"
-                                                        type="checkbox" id="inlineCheckbox1" 
-                                                        value="1"
-                                                        @checked($data->independent_copyright)
-                                                        >
+                                                    <input class="form-check-input" name="independent_copyright" type="checkbox"
+                                                        id="inlineCheckbox1" value="1" @checked($data->independent_copyright)>
                                                     <label class="form-check-label mr-1" for="inlineCheckbox1">
                                                         حقوق ملكية مستقلة
                                                     </label>
-
+                                
                                                     <div style="height:20px;"></div>
                                                     <button class="btn btn-success mt-20" type="submit">حفظ</button>
-
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                
 
                                 <div class="tab-pane mt-3 fade" id="security" role="tabpanel"
                                     aria-labelledby="security-tab">

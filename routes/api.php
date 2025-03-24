@@ -32,8 +32,4 @@ Route::group(['prefix' => '/development'], function () {
     });
 
     Route::prefix('instructor')->middleware(['api.auth', 'api.level-access:teacher'])->namespace('Instructor')->group(base_path('routes/api/instructor.php'));
-
-
-
-
 });

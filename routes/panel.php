@@ -23,7 +23,7 @@ Route::group(['namespace' => 'Web','prefix' => 'panel', 'middleware' => ['check_
 Route::group(['namespace' => 'Panel', 'prefix' => 'panel', 'middleware' => ['check_mobile_app', 'impersonate', 'panel', 'share', 'check_maintenance']], function () {
     Route::get('/course/{WebinarId}/showCertificate/{format?}', 'CertificateController@makeCourseCertificate');
 
-     Route::get('/bundle/{bundleId}/showCertificate/{format?}', 'CertificateController@makeBundleCertificate');
+    Route::get('/bundle/{bundleId}/showCertificate/{format?}', 'CertificateController@makeBundleCertificate');
   //  Route::get('/bundle/{bundleId}/showCertificate', 'CertificateController@makeBundleCertificate');
     Route::get('/', 'DashboardController@dashboard')->middleware('can:show_panel');
 

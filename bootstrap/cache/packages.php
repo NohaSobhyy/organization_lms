@@ -65,13 +65,6 @@
       0 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
     ),
   ),
-  'fruitcake/laravel-cors' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Fruitcake\\Cors\\CorsServiceProvider',
-    ),
-  ),
   'gathuku/laravelmpesa' => 
   array (
     'aliases' => 
@@ -92,17 +85,6 @@
     'providers' => 
     array (
       0 => 'Intervention\\Image\\ImageServiceProvider',
-    ),
-  ),
-  'jenssegers/agent' => 
-  array (
-    'aliases' => 
-    array (
-      'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
-    ),
-    'providers' => 
-    array (
-      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
     ),
   ),
   'joisarjignesh/bigbluebutton' => 

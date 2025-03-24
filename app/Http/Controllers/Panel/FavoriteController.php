@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Panel;
 use App\Http\Controllers\Controller;
 use App\Models\Favorite;
 
-class favoriteController extends Controller
+class FavoriteController extends Controller
 {
     public function index()
     {

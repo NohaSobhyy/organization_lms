@@ -277,9 +277,21 @@ class PortalController extends Controller
 
     public function portal_features_update(Portal $portal, Request $request)
     {
+        $independentCopyright = $request->has('independent_copyright') ? 1 : 0;
+
         $portal->update([
             'independent_copyright' => $request->independent_copyright,
         ]);
+
+        // If independent copyright is enabled, remove the logo
+        if ($independentCopyright && $portal->logo) {
+            if (file_exists(public_path('images/' . $portal->logo))) {
+                unlink(public_path('images/' . $portal->logo)); // Delete logo file
+            }
+            $portal->update([
+                'logo' => null, // Remove logo from database
+            ]);
+        }
         $msg = 'تم اضافة التعديلات بنجاح';
         return back()->with('success', $msg);
     }
@@ -298,9 +310,10 @@ class PortalController extends Controller
         return back()->with('success', $msg);
     }
 
-    public function portal_accept(Portal $portal, Request $request) {
+    public function portal_accept(Portal $portal, Request $request)
+    {
         $portal->update([
-            'accepted'=>1
+            'accepted' => 1
         ]);
         $msg = 'تم قبول الحساب بنجاح';
         return redirect()->route('portal.index')->with('success', $msg);
@@ -316,7 +329,6 @@ class PortalController extends Controller
 
     public function subscribe_delete($id)
     {
-
         Portal::where('id', $id)->first()->delete();
         $msg = 'تم حذف الطلب بنجاح';
         return redirect()->route('portal.requests')->with('success', $msg);
@@ -324,7 +336,6 @@ class PortalController extends Controller
 
     public function meetings()
     {
-
         $pageTitle = 'ادارة توقيتات الاجتماعات';
         $meetings = PortalMeetingsSlots::where('deleted', 0)->get();
         return view('admin.portals.meetings', compact('pageTitle', 'meetings'));

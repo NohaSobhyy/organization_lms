@@ -1,6 +1,5 @@
 <?php
-
-
+namespace App\Mixins\Geo;
 class Geo
 {
     static public function get_geo_text($array, $type)
