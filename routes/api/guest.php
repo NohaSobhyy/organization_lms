@@ -95,12 +95,3 @@ Route::group([], function () {
     Route::get('/product_categories', ['uses' => 'ProductCategoryController@index']);
 
 });
-
-
-
-
-
-
-
-
-

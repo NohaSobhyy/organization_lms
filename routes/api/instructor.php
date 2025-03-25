@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\BundleController;
+use App\Http\Controllers\Api\Instructor\BundleWebinarController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([], function () {

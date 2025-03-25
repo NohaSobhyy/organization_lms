@@ -267,4 +267,5 @@ Route::group([], function () {
         Route::get('/{id}/steps/{step_id}/pay', 'InstallmentsController@payStep');
     });
 
+    
 });
