@@ -56,7 +56,7 @@
         "stripe/stripe-php": "^10.17",
         "toshy/bunnynet-php": "2.3.5",
         "twilio/sdk": "^7.5",
-        "tymon/jwt-auth": "^2.0",
+        "tymon/jwt-auth": "^2.2",
         "tzsk/payu": "^7.0",
         "unicodeveloper/laravel-paystack": "^1.1",
         "unisharp/laravel-filemanager": "^2.6",

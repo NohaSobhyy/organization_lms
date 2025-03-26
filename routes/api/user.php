@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Api\Panel\BlogCommentController;
 use Illuminate\Support\Facades\Route;
-use App\Models\InstallmentOrder;
+
 
 Route::group([], function () {
 

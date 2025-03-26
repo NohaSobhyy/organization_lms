@@ -21,7 +21,7 @@ Route::group(['prefix' => '/development'], function () {
         return 'api test';
     });
 
-    Route::middleware('api') ->group(base_path('routes/api/auth.php'));
+    Route::middleware('api')->group(base_path('routes/api/auth.php'));
 
     Route::namespace('Web')->group(base_path('routes/api/guest.php'));
 
@@ -32,4 +32,9 @@ Route::group(['prefix' => '/development'], function () {
     });
 
     Route::prefix('instructor')->middleware(['api.auth', 'api.level-access:teacher'])->namespace('Instructor')->group(base_path('routes/api/instructor.php'));
+
+    Route::prefix('portal')->middleware(['api.auth'])->namespace('Portal')->group(base_path('routes/api/portal.php'));
+
+
+    
 });

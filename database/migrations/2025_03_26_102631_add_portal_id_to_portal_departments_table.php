@@ -13,15 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('portal_users', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('portal_id');
-            $table->enum('role', ['team_leader', 'employee']);
-            $table->timestamps();
-
-            // Foreign keys
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        Schema::table('portal_departments', function (Blueprint $table) {
+            $table->unsignedBigInteger('portal_id')->after('id');
             $table->foreign('portal_id')->references('id')->on('portals')->onDelete('cascade');
         });
     }
@@ -33,6 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('portal_users');
+        Schema::table('portal_departments', function (Blueprint $table) {
+            $table->dropForeign(['portal_id']);
+            $table->dropColumn('portal_id');
+        });
     }
 };
