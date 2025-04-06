@@ -32,4 +32,5 @@ Route::group(['prefix' => '{company_name}'], function () {
     Route::post('/departments/{department}/users', [DepartmentController::class, 'addUserToDepartment']);
     Route::delete('/departments/{department}/users', [DepartmentController::class, 'removeUserFromDepartment']);
     Route::get('/departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
+    Route::put('/departments/{department}/users/role', [DepartmentController::class, 'updateUserRole']);
 });

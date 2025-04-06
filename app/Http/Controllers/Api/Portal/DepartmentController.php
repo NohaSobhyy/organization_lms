@@ -228,11 +228,13 @@ class DepartmentController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'user_id' => ['required', 'integer', 'exists:users,id']
+                'user_id' => ['required', 'integer', 'exists:users,id'],
+                'is_team_leader' => ['sometimes', 'boolean']
             ], [
                 'user_id.required' => 'User ID is required',
                 'user_id.integer' => 'User ID must be an integer',
-                'user_id.exists' => 'The selected user does not exist'
+                'user_id.exists' => 'The selected user does not exist',
+                'is_team_leader.boolean' => 'Team leader flag must be true or false'
             ]);
 
             if ($validator->fails()) {
@@ -248,15 +250,26 @@ class DepartmentController extends Controller
                 return $this->errorResponse('User already belongs to this department', 400);
             }
 
+            // Check if user is being set as team leader
+            $isTeamLeader = $request->boolean('is_team_leader', false);
+            
+            if ($isTeamLeader) {
+                // Set role_id to 17 for team leader
+                $user->role_id = 17;
+                $user->save();
+            }
+
             $department->users()->attach($user->id);
 
             Log::info('User added to department successfully', [
                 'user_id' => $user->id,
-                'department_id' => $department->id
+                'department_id' => $department->id,
+                'is_team_leader' => $isTeamLeader
             ]);
 
             return $this->successResponse('User added to department successfully', [
-                'current_users' => $department->users()->count()
+                'current_users' => $department->users()->count(),
+                'is_team_leader' => $isTeamLeader
             ]);
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found', 404);
@@ -366,7 +379,7 @@ class DepartmentController extends Controller
             }
 
             $users = $department->users()
-                ->select([
+                ->select([ 
                     'users.id',
                     'users.full_name',
                     'users.role_name',
@@ -385,6 +398,95 @@ class DepartmentController extends Controller
                 'line' => $e->getLine()
             ]);
             return $this->errorResponse('Failed to fetch department users');
+        }
+    }
+
+    /**
+     * Update user role in department.
+     *
+     * @param Request $request
+     * @param string $company_name
+     * @param Department $department
+     * @return JsonResponse
+     */
+    public function updateUserRole(Request $request, string $company_name, Department $department): JsonResponse
+    {
+        try {
+            Log::info('Updating user role in department', [
+                'company_name' => $company_name,
+                'department_id' => $department->id,
+                'request_data' => $request->all()
+            ]);
+
+            $portal = $this->getPortal($company_name);
+            if (!$portal) {
+                return $this->errorResponse('Portal not found', 404);
+            }
+
+            if (!$this->verifyDepartmentBelongsToPortal($department, $portal)) {
+                return $this->errorResponse('Department does not belong to this portal', 403);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'user_id' => ['required', 'integer', 'exists:users,id'],
+                'is_team_leader' => ['required', 'boolean']
+            ], [
+                'user_id.required' => 'User ID is required',
+                'user_id.integer' => 'User ID must be an integer',
+                'user_id.exists' => 'The selected user does not exist',
+                'is_team_leader.required' => 'Team leader flag is required',
+                'is_team_leader.boolean' => 'Team leader flag must be true or false'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator->errors());
+            }
+
+            $user = User::findOrFail($request->user_id);
+            if (!$this->verifyUserBelongsToPortal($user, $portal)) {
+                return $this->errorResponse('User does not belong to this portal', 403);
+            }
+
+            if (!$department->users()->where('user_id', $user->id)->exists()) {
+                return $this->errorResponse('User does not belong to this department', 404);
+            }
+
+            // Update user role based on team leader flag
+            if ($request->boolean('is_team_leader')) {
+                // Set role_id to 17 for team leader
+                $user->role_id = 17;
+                $user->role_name = 'team_leader';
+            } else {
+                // Set role_id to 18 for employee
+                $user->role_id = 18;
+                $user->role_name = 'employee';
+            }
+            $user->save();
+
+            Log::info('User role updated in department', [
+                'user_id' => $user->id,
+                'department_id' => $department->id,
+                'new_role_id' => $user->role_id,
+                'new_role_name' => $user->role_name
+            ]);
+
+            return $this->successResponse('User role updated successfully', [
+                'user_id' => $user->id,
+                'role_id' => $user->role_id,
+                'role_name' => $user->role_name,
+                'is_team_leader' => $request->boolean('is_team_leader')
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('User not found', 404);
+        } catch (ValidationException $e) {
+            return $this->validationErrorResponse($e->errors());
+        } catch (\Exception $e) {
+            Log::error('Failed to update user role', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return $this->errorResponse('Failed to update user role');
         }
     }
 

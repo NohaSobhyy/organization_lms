@@ -237,8 +237,7 @@ class UserController extends Controller
             'mobile' => 'required|string|max:15|regex:/^[0-9]+$/',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
-            'bio' => 'nullable|string',
-            'department_id' => 'nullable|integer|exists:departments,id'
+            'bio' => 'nullable|string'
         ], [
             'full_name.required' => 'Full name is required',
             'full_name.max' => 'Full name must not exceed 255 characters',
@@ -252,7 +251,6 @@ class UserController extends Controller
             'email.unique' => 'This email is already registered',
             'password.required' => 'Password is required',
             'password.min' => 'Password must be at least 8 characters long',
-            'department_id.exists' => 'The selected department does not exist'
         ]);
     }
 
@@ -282,7 +280,7 @@ class UserController extends Controller
             $userData = [
                 'full_name' => $request->full_name,
                 'role_name' => $request->role_name,
-                'role_id' => 1, // Default role ID
+                'role_id' => 18, // Default role ID (role: employee)
                 'mobile' => $request->mobile,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
