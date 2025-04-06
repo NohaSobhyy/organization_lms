@@ -283,7 +283,7 @@ class PortalController extends Controller
             'independent_copyright' => $request->independent_copyright,
         ]);
 
-        // If independent copyright is enabled, remove the logo
+        // This will remove the company logo (EX:vodafone), it's temporary and will change to Anas Logo soon
         if ($independentCopyright && $portal->logo) {
             if (file_exists(public_path('images/' . $portal->logo))) {
                 unlink(public_path('images/' . $portal->logo)); // Delete logo file

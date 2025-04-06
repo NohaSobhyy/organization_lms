@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Web\ZoomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,8 +32,6 @@ Route::group(['prefix' => '/development'], function () {
 
     Route::prefix('instructor')->middleware(['api.auth', 'api.level-access:teacher'])->namespace('Instructor')->group(base_path('routes/api/instructor.php'));
 
-    Route::prefix('portal')->middleware(['api.auth'])->namespace('Portal')->group(base_path('routes/api/portal.php'));
-
-
+    Route::prefix('portal')->middleware(['api.auth'])->group(base_path('routes/api/portal.php'));
     
 });

@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Organization\UserController;
+use App\Http\Controllers\Api\Portal\UserController;
+use App\Http\Controllers\Api\Portal\DepartmentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,27 +14,22 @@ use App\Http\Controllers\Api\Organization\UserController;
 |
 */
 
-Route::group(['middleware' => ['check_mobile_app', 'share', 'check_maintenance']], function () {
+Route::group(['prefix' => '{company_name}'], function () {
+    // User CRUD
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-    // Portal Authentication Routes
-    // Route::post('/login', [PortalAuthController::class, 'login']);  
-    // Route::post('/logout', [PortalAuthController::class, 'logout'])->middleware('auth:api');  
-
-
-    Route::get('/{company_name}', ['PortalController@portal_login'])->name('portal.login');
-
-    Route::group(['prefix' => '{company_name}'], function () {
-        // User CRUD
-        Route::get('/users', [UserController::class, 'index']);
-        Route::post('/users', [UserController::class, 'store']);
-        Route::put('/users/{user}', [UserController::class, 'update']);
-        Route::delete('/users/{user}', [UserController::class, 'destroy']);
-
-        // Department CRUD
-        Route::get('/departments', ['departmentController@index']);
-        Route::post('/departments', ['departmentController@store']);
-        Route::put('/departments/{department}', ['departmentController@update']);
-        Route::delete('/departments/{department}', ['departmentController@destroy']);
-        Route::post('/departments/{department}/add-user', ['departmentController@addUserToDepartment']);
-    });
+    // Department CRUD
+    Route::get('/departments', [DepartmentController::class, 'index']);
+    Route::post('/departments', [DepartmentController::class, 'store']);
+    Route::put('/departments/{department}', [DepartmentController::class, 'update']);
+    Route::delete('/departments/{department}', [DepartmentController::class, 'destroy']);
+    
+    // Department User Management
+    Route::post('/departments/{department}/users', [DepartmentController::class, 'addUserToDepartment']);
+    Route::delete('/departments/{department}/users', [DepartmentController::class, 'removeUserFromDepartment']);
+    Route::get('/departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
 });
