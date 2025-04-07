@@ -3,8 +3,7 @@
 namespace App\Models\Api;
 
 use App\Models\Api\Meeting;
-use App\Models\Region;
-use App\Models\UserOccupation;
+
 use App\User as Model;
 use App\Models\ReserveMeeting;
 use App\Models\Api\Follow;

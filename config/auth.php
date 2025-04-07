@@ -45,9 +45,9 @@ return [
             'driver' => 'jwt',
             'provider' => 'api_users',
         ],
-        'portals'=>[
-            'driver'=> 'session',
-            'provider' => 'portals'
+        'portal' => [
+            'driver' => 'jwt',
+            'provider' => 'portals',
         ],
     ],
 
@@ -76,6 +76,10 @@ return [
         'api_users' => [
             'driver' => 'eloquent',
             'model' => App\Models\Api\User::class,
+        ],
+        'portals' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Portal::class,
         ],
         // 'users' => [
         //     'driver' => 'database',

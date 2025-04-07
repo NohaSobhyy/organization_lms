@@ -4,7 +4,12 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Models\Portal;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
 {
@@ -29,7 +34,6 @@ class LoginController extends Controller
         validateParam($request->all(), $rules);
 
         return $this->attemptLogin($request);
-
     }
 
     public function username()
@@ -52,16 +56,43 @@ class LoginController extends Controller
             'password' => $request->get('password')
         ];
 
-
-        if (!$token = auth('api')->attempt($credentials)) {
-            return apiResponse2(0, 'invalid', "invalid email or password");
+        // Try to authenticate as a user first
+        if ($token = auth('api')->attempt($credentials)) {
+            return $this->afterLogged($request, $token);
         }
-        return $this->afterLogged($request, $token);
+
+        // If user authentication fails, try portal authentication
+        $portal = Portal::where('email', $request->email)->first();
+        
+        if ($portal && Hash::check($request->password, $portal->password)) {
+            // Generate a JWT token for the portal
+            $token = JWTAuth::fromUser($portal);
+            
+            // Set the portal as the authenticated user
+            auth('api')->setUser($portal);
+            
+            return $this->afterLogged($request, $token, false, true);
+        }
+
+        return apiResponse2(0, 'invalid', "invalid email or password");
     }
 
-    public function afterLogged(Request $request, $token, $verify = false)
+    public function afterLogged(Request $request, $token, $verify = false, $isPortal = false)
     {
         $user = auth('api')->user();
+
+        if ($isPortal) {
+            $data['token'] = $token;
+            $data['portal'] = [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "status" => $user->status,
+                "business_name" => $user->bussiness_name
+            ];
+
+            return apiResponse2(1, 'login', "portal login successfully", $data);
+        }
 
         if ($user->ban) {
             $time = time();
@@ -76,31 +107,15 @@ class LoginController extends Controller
                     'ban_end_at' => null,
                 ]);
             }
-
         }
 
         if ($user->status != User::$active and !$verify) {
-            // auth('api')->logout();
             auth('api')->logout();
             return apiResponse2(0, 'inactive_account', trans('auth.inactive_account'));
-            //  dd(apiAuth());
-            // $verificationController = new VerificationController();
-            // $checkConfirmed = $verificationController->checkConfirmed($user, 'email', $request->input('email'));
-
-            // if ($checkConfirmed['status'] == 'send') {
-
-            //     return apiResponse2(0, 'not_verified', "can't login before verify your acount");
-
-            // } elseif ($checkConfirmed['status'] == 'verified') {
-            //     $user->update([
-            //         'status' => User::$active,
-            //     ]);
-            // }
         } elseif ($verify) {
             $user->update([
                 'status' => User::$active,
             ]);
-
         }
 
         if ($user->status != User::$active) {
@@ -109,7 +124,7 @@ class LoginController extends Controller
         }
 
         $profile_completion = [];
-        $data  ['token'] = $token;
+        $data['token'] = $token;
         $data['user'] = [
             "id" => $user->id,
             "full_name" => $user->full_name,
@@ -126,8 +141,6 @@ class LoginController extends Controller
         }
 
         return apiResponse2(1, 'login', "user login successfully", $data);
-
-
     }
 
     public function logout()
@@ -138,6 +151,4 @@ class LoginController extends Controller
         }
         return apiResponse2(0, 'failed', trans('auth.logout.failed'));
     }
-
-
 }

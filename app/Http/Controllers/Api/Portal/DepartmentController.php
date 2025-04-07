@@ -455,12 +455,15 @@ class DepartmentController extends Controller
             if ($request->boolean('is_team_leader')) {
                 // Set role_id to 17 for team leader
                 $user->role_id = 17;
-                $user->role_name = 'team_leader';
             } else {
                 // Set role_id to 18 for employee
                 $user->role_id = 18;
-                $user->role_name = 'employee';
             }
+            $user->save();
+
+            // Get the role name from the roles table
+            $role = \App\Models\Role::find($user->role_id);
+            $user->role_name = $role ? $role->name : 'employee';
             $user->save();
 
             Log::info('User role updated in department', [

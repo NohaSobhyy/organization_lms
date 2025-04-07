@@ -14,23 +14,26 @@ use App\Http\Controllers\Api\Portal\DepartmentController;
 |
 */
 
-Route::group(['prefix' => '{company_name}'], function () {
-    // User CRUD
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::put('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-    // Department CRUD
-    Route::get('/departments', [DepartmentController::class, 'index']);
-    Route::post('/departments', [DepartmentController::class, 'store']);
-    Route::put('/departments/{department}', [DepartmentController::class, 'update']);
-    Route::delete('/departments/{department}', [DepartmentController::class, 'destroy']);
-    
-    // Department User Management
-    Route::post('/departments/{department}/users', [DepartmentController::class, 'addUserToDepartment']);
-    Route::delete('/departments/{department}/users', [DepartmentController::class, 'removeUserFromDepartment']);
-    Route::get('/departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
-    Route::put('/departments/{department}/users/role', [DepartmentController::class, 'updateUserRole']);
+Route::prefix('{company_name}')->group(function () {
+    // Department routes
+    Route::middleware(['auth:api', 'portal.access'])->group(function () {
+        Route::get('/departments', [DepartmentController::class, 'index']);
+        Route::post('/departments', [DepartmentController::class, 'store']);
+        Route::put('/departments/{department}', [DepartmentController::class, 'update']);
+        Route::delete('/departments/{department}', [DepartmentController::class, 'destroy']);
+        Route::post('/departments/{department}/users', [DepartmentController::class, 'addUserToDepartment']);
+        Route::delete('/departments/{department}/users', [DepartmentController::class, 'removeUserFromDepartment']);
+        Route::get('/departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
+        Route::put('/departments/{department}/users/role', [DepartmentController::class, 'updateUserRole']);
+    });
+
+    // User routes
+    Route::middleware(['auth:api', 'portal.access'])->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{user}', [UserController::class, 'show']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{user}', [UserController::class, 'update']);
+        Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    });
 });

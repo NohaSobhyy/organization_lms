@@ -12,6 +12,8 @@ use App\Policies\WebinarPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Portal;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -34,7 +36,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         $this->registerPolicies();
 
         $minutes = 60 * 60; // 1 hour
@@ -50,7 +51,11 @@ class AuthServiceProvider extends ServiceProvider
             });
         }
 
-
-        //
+        Auth::provider('portals', function ($app, array $config) {
+            return new \App\Auth\PortalUserProvider(
+                $app['hash'],
+                $config['model']
+            );
+        });
     }
 }
