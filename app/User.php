@@ -1099,4 +1099,9 @@ class User extends Authenticatable
     function references(){
         return $this->hasMany(UserReference::class,'user_id', 'id');
     }
+
+    public function portal()
+    {
+        return $this->hasOne(\App\Models\Portal::class);
+    }
 }

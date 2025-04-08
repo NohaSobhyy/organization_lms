@@ -364,4 +364,9 @@ class User extends Model implements JWTSubject
         return  $bundleSales->groupBy('bundle_id', 'webinar_id');
     }
 
+    public function portal()
+    {
+        return $this->hasOne(Portal::class);
+    }
+
 }

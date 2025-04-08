@@ -68,6 +68,7 @@
                                                         @if($portal->activated)
                                                         <button class="btn btn-sm btn-warning">تعطيل</button>
                                                         @else
+                                                        <!-- if clicked add data to users table -->
                                                         <button class="btn btn-sm btn-success">تفعيل</button>
                                                         @endif
                                                     </form>

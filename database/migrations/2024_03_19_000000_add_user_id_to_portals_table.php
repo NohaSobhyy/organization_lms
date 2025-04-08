@@ -6,24 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::table('portals', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned()->nullable()->after('id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id')->nullable()->after('id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('portals', function (Blueprint $table) {
@@ -31,4 +21,4 @@ return new class extends Migration
             $table->dropColumn('user_id');
         });
     }
-};
+}; 

@@ -110,8 +110,22 @@ class LoginController extends Controller
         }
 
         if ($user->status != User::$active and !$verify) {
+            // auth('api')->logout();
             auth('api')->logout();
             return apiResponse2(0, 'inactive_account', trans('auth.inactive_account'));
+            //  dd(apiAuth());
+            // $verificationController = new VerificationController();
+            // $checkConfirmed = $verificationController->checkConfirmed($user, 'email', $request->input('email'));
+
+            // if ($checkConfirmed['status'] == 'send') {
+
+            //     return apiResponse2(0, 'not_verified', "can't login before verify your acount");
+
+            // } elseif ($checkConfirmed['status'] == 'verified') {
+            //     $user->update([
+            //         'status' => User::$active,
+            //     ]);
+            // }
         } elseif ($verify) {
             $user->update([
                 'status' => User::$active,

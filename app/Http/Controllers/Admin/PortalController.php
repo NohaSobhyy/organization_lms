@@ -10,7 +10,9 @@ use App\Models\Department;
 use App\Models\Portal;
 use App\Models\PortalMeetingsSlots;
 use App\Models\PortalRequest;
+use App\Models\Api\User;
 use Carbon\Carbon;
+use App\Models\Role;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -312,7 +314,29 @@ class PortalController extends Controller
 
     public function portal_accept(Portal $portal, Request $request)
     {
+        $role = Role::find(19);
+        if (!$role) {
+            return back()->with('error', 'Role not found');
+        }
+        // Create a new user account
+        $user = User::create([
+            'full_name' => $portal->name,
+            'email' => $portal->email,
+            'password' => Hash::make($portal->password),
+            'role_id' => 19, // Set role_id to 19 for portal admin
+            'role_name' => $role->name, 
+            'status' => 'active',
+            'created_at' => time(),
+            'updated_at' => time(),
+            'organ_id' => $portal->id,
+            'remember_token' => null,
+            'created_at' => time(),
+            'updated_at' => time()
+        ]);
+
+        // Update portal with user_id and accepted status
         $portal->update([
+            'user_id' => $user->id,
             'accepted' => 1
         ]);
         $msg = 'تم قبول الحساب بنجاح';
