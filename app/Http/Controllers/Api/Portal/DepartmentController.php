@@ -494,6 +494,117 @@ class DepartmentController extends Controller
     }
 
     /**
+     * Display the specified department.
+     *
+     * @param string $company_name
+     * @param Department $department
+     * @return JsonResponse
+     */
+    public function show(string $company_name, Department $department): JsonResponse
+    {
+        try {
+            Log::info('Fetching department details', [
+                'company_name' => $company_name,
+                'department_id' => $department->id
+            ]);
+
+            // Get portal first
+            $portal = Portal::where('bussiness_name', $company_name)->first();
+            if (!$portal) {
+                Log::error('Portal not found', ['company_name' => $company_name]);
+                return $this->errorResponse('Portal not found', 404);
+            }
+
+            // Verify department belongs to portal
+            if ($department->portal_id !== $portal->id) {
+                Log::error('Department does not belong to portal', [
+                    'department_id' => $department->id,
+                    'portal_id' => $portal->id,
+                    'department_portal_id' => $department->portal_id
+                ]);
+                return $this->errorResponse('Department does not belong to this portal', 403);
+            }
+
+            // Load department with all related data
+            $department->load([
+                'users' => function($query) {
+                    $query->select([
+                        'users.id',
+                        'users.full_name',
+                        'users.role_name',
+                        'users.role_id',
+                        'users.mobile',
+                        'users.email',
+                        'users.bio',
+                        'users.created_at'
+                    ]);
+                },
+                'portal' => function($query) {
+                    $query->select([
+                        'portals.id',
+                        'portals.bussiness_name',
+                        'portals.email',
+                        'portals.created_at'
+                    ]);
+                }
+            ]);
+
+            // Get team leaders in this department
+            $teamLeaders = $department->users()
+                ->where('role_id', 17)
+                ->select([
+                    'users.id',
+                    'users.full_name',
+                    'users.email',
+                    'users.mobile'
+                ])
+                ->get();
+
+            $totalUsers = $department->users()->count();
+
+            // Get employees count (role_id = 18)
+            $employeesCount = $department->users()
+                ->where('role_id', 18)
+                ->count();
+
+            // Prepare response data
+            $responseData = [
+                'department' => [
+                    'id' => $department->id,
+                    'name' => $department->name,
+                    'name_ar' => $department->name_ar,
+                    'created_at' => $department->created_at,
+                    'updated_at' => $department->updated_at,
+                    'total_users' => $totalUsers,
+                    'employees_count' => $employeesCount,
+                    'team_leaders_count' => $teamLeaders->count(),
+                    'portal' => $department->portal,
+                ],
+                'team_leaders' => $teamLeaders,
+                'users' => $department->users
+            ];
+
+            Log::info('Department details retrieved successfully', [
+                'department_id' => $department->id,
+                'total_users' => $totalUsers,
+                'team_leaders_count' => $teamLeaders->count()
+            ]);
+
+            return $this->successResponse('Department details retrieved successfully', $responseData);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch department details', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'company_name' => $company_name,
+                'department_id' => $department->id ?? null
+            ]);
+            return $this->errorResponse('Failed to fetch department details: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Verify department belongs to portal
      *
      * @param Department $department

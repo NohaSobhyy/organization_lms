@@ -19,6 +19,7 @@ Route::prefix('{company_name}')->group(function () {
     // Department routes
     Route::middleware(['auth:api', 'portal.access'])->group(function () {
         Route::get('/departments', [DepartmentController::class, 'index']);
+        Route::get('/departments/{department}', [DepartmentController::class, 'show']);
         Route::post('/departments', [DepartmentController::class, 'store']);
         Route::put('/departments/{department}', [DepartmentController::class, 'update']);
         Route::delete('/departments/{department}', [DepartmentController::class, 'destroy']);
