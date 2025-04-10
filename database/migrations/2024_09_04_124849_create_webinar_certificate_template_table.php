@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unsignedInteger('webinar_id');
             $table->foreign('webinar_id')->references('id')->on('webinars')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
-           
         });
     }
 

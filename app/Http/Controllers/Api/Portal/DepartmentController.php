@@ -252,7 +252,7 @@ class DepartmentController extends Controller
 
             // Check if user is being set as team leader
             $isTeamLeader = $request->boolean('is_team_leader', false);
-            
+
             if ($isTeamLeader) {
                 // Set role_id to 17 for team leader
                 $user->role_id = 17;
@@ -318,7 +318,6 @@ class DepartmentController extends Controller
                 'user_id.integer' => 'User ID must be an integer',
                 'user_id.exists' => 'The selected user does not exist'
             ]);
-
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator->errors());
             }
@@ -379,7 +378,7 @@ class DepartmentController extends Controller
             }
 
             $users = $department->users()
-                ->select([ 
+                ->select([
                     'users.id',
                     'users.full_name',
                     'users.role_name',
@@ -527,7 +526,7 @@ class DepartmentController extends Controller
 
             // Load department with all related data
             $department->load([
-                'users' => function($query) {
+                'users' => function ($query) {
                     $query->select([
                         'users.id',
                         'users.full_name',
@@ -539,7 +538,7 @@ class DepartmentController extends Controller
                         'users.created_at'
                     ]);
                 },
-                'portal' => function($query) {
+                'portal' => function ($query) {
                     $query->select([
                         'portals.id',
                         'portals.bussiness_name',

@@ -9,11 +9,9 @@ use App\Models\Countries;
 use App\Models\Department;
 use App\Models\Portal;
 use App\Models\PortalMeetingsSlots;
-use App\Models\PortalRequest;
 use App\Models\Api\User;
 use Carbon\Carbon;
 use App\Models\Role;
-use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -21,13 +19,11 @@ use GuzzleHttp\Client;
 
 class PortalController extends Controller
 {
-
-
     public function subscribe_post(Request $request)
     {
         $meeting_time = PortalMeetingsSlots::findorFail($request->meeting_time);
 
-
+        $plan_id = $request->plan;
 
         $msg = 'تم تسجيل طلب الانضمام , سيتم التواصل معك لتحديد البرامج الدراسية و بيانات الدخول الخاصة بك';
 
@@ -103,7 +99,6 @@ class PortalController extends Controller
 
         $zoom_meeting_url = $meeting['start_url'];
         $zoom_meeting_id = $meeting['id'];
-
         Portal::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -111,8 +106,8 @@ class PortalController extends Controller
             'address' => $request->address,
             'bussiness_name' => $request->bussiness_name,
             'meeting_time' => $request->meeting_time,
-            'zoom_meeting_id' => $meeting['id']
-
+            'zoom_meeting_id' => $meeting['id'],
+            'plan_id' => $plan_id
         ]);
 
         return redirect()->route('subscribe')->with(
@@ -213,10 +208,8 @@ class PortalController extends Controller
 
     public function portal_create($id)
     {
-
         $pageTitle = 'انشاء منفذ';
         $portal = Portal::findorFail($id);
-        // dd($portal->accepted);
         $data = $portal;
         return view('admin.portals.portal', compact('pageTitle', 'data', 'portal'));
     }
@@ -324,7 +317,7 @@ class PortalController extends Controller
             'email' => $portal->email,
             'password' => Hash::make($portal->password),
             'role_id' => 19, // Set role_id to 19 for portal admin
-            'role_name' => $role->name, 
+            'role_name' => $role->name,
             'status' => 'active',
             'created_at' => time(),
             'updated_at' => time(),

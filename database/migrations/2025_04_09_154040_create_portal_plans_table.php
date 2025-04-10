@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('portal_departments', function (Blueprint $table) {
-            $table->id();
+        Schema::create('portal_plans', function (Blueprint $table) {
+            $table->id()->autoIncrement();
             $table->string('name');
             $table->string('name_ar');
-            $table->boolean('deleted')->default(false);
+            $table->text('description')->nullable();
+            $table->enum('type', ['Basic', 'Premium', 'customize']); 
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
         });
     }
@@ -29,10 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
-
-    Schema::dropIfExists('portal_departments'); 
-
-    Schema::enableForeignKeyConstraints();
+        Schema::dropIfExists('portal_plans');
     }
 };

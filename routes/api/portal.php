@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Portal\UserController;
 use App\Http\Controllers\Api\Portal\DepartmentController;
+use App\Http\Controllers\Api\Portal\ProfileController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,6 +18,12 @@ use App\Http\Controllers\Api\Portal\DepartmentController;
 
 
 Route::prefix('{company_name}')->group(function () {
+    // Profile 
+    Route::middleware(['auth:api', 'portal.access'])->group(function () {
+        Route::get('/profile', [ProfileController::class, 'index']);
+        Route::put('/profile/{id}', [ProfileController::class, 'update']);
+    });
+
     // Department routes
     Route::middleware(['auth:api', 'portal.access'])->group(function () {
         Route::get('/departments', [DepartmentController::class, 'index']);
