@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\User;
 
 class Portal extends Authenticatable implements JWTSubject
 {
@@ -121,13 +122,9 @@ class Portal extends Authenticatable implements JWTSubject
         return 'remember_token';
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class, 'organ_id');
     }
-
-    // public function plan()
-    // {
-    //     return $this->belongsTo(PortalPlan::class, 'plan_id');
-    // }
+    
 }

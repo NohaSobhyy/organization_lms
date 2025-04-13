@@ -30,8 +30,8 @@ use App\Student;
 use App\Models\Webinar;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use App\Models\OrderItem;
+use App\Models\Portal;
 use App\Models\Service;
 use App\Models\ServiceUser;
 use App\Models\UserReference;
@@ -84,7 +84,7 @@ class User extends Authenticatable
     }
     public function appliedProgram()
     {
-        return ($this->application_type == 'programs') ? $this->hasOne(Bundle::class, 'id', 'program_id') :  $this->hasOne(Webinar::class,'id', 'program_id');
+        return ($this->application_type == 'programs') ? $this->hasOne(Bundle::class, 'id', 'program_id') :  $this->hasOne(Webinar::class, 'id', 'program_id');
     }
 
     static function getAdmin()
@@ -131,11 +131,11 @@ class User extends Authenticatable
     public function hasPermission($section_name)
     {
         // if (self::isAdmin() || self::isUser()) {
-            if (!isset($this->permissions)) {
-                $sections_id = Permission::where('role_id', '=', $this->role_id)->where('allow', true)->pluck('section_id')->toArray();
-                $this->permissions = Section::whereIn('id', $sections_id)->pluck('name')->toArray();
-            }
-            return in_array($section_name, $this->permissions);
+        if (!isset($this->permissions)) {
+            $sections_id = Permission::where('role_id', '=', $this->role_id)->where('allow', true)->pluck('section_id')->toArray();
+            $this->permissions = Section::whereIn('id', $sections_id)->pluck('name')->toArray();
+        }
+        return in_array($section_name, $this->permissions);
         // }
         // return false;
     }
@@ -611,8 +611,9 @@ class User extends Authenticatable
     }
 
 
-    public function bundleSales($class_id = null){
-        $bundleSales= $this->hasMany(Sale::class, 'buyer_id')->whereNotNull('bundle_id');
+    public function bundleSales($class_id = null)
+    {
+        $bundleSales = $this->hasMany(Sale::class, 'buyer_id')->whereNotNull('bundle_id');
 
         if (!empty($class_id)) {
             $bundleSales = $bundleSales->where('class_id', $class_id);
@@ -750,7 +751,7 @@ class User extends Authenticatable
 
     public function webinarSales()
     {
-      return $this->hasMany(Sale::class, 'buyer_id')
+        return $this->hasMany(Sale::class, 'buyer_id')
             ->whereNotNull('webinar_id')
             ->whereNull('refund_at');
     }
@@ -758,10 +759,10 @@ class User extends Authenticatable
     public function purchases($class_id = null)
     {
         $bundleSales = $this->hasMany(Sale::class, 'buyer_id')
-           ->where(function ($query){
-            $query->whereNotNull('bundle_id')
-            ->orWhereNotNull('webinar_id');
-           })
+            ->where(function ($query) {
+                $query->whereNotNull('bundle_id')
+                    ->orWhereNotNull('webinar_id');
+            })
             ->whereNull('refund_at');
 
         if (!empty($class_id)) {
@@ -1096,12 +1097,13 @@ class User extends Authenticatable
     }
 
 
-    function references(){
-        return $this->hasMany(UserReference::class,'user_id', 'id');
+    function references()
+    {
+        return $this->hasMany(UserReference::class, 'user_id', 'id');
     }
 
     public function portal()
     {
-        return $this->hasOne(\App\Models\Portal::class);
+        return $this->belongsTo(Portal::class, 'organ_id');
     }
 }

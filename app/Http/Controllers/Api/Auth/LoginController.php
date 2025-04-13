@@ -139,6 +139,7 @@ class LoginController extends Controller
 
         $profile_completion = [];
         $data['token'] = $token;
+        $businessName = optional($user->portal)->bussiness_name;
         $data['user'] = [
             "id" => $user->id,
             "full_name" => $user->full_name,
@@ -147,7 +148,8 @@ class LoginController extends Controller
             "mobile" => $user->mobile,
             "email" => $user->email,
             "status" => $user->status,
-            "as_student" => $user->student
+            "as_student" => $user->student,
+            "business_name" => $businessName
         ];
         if (!$user->full_name) {
             $profile_completion[] = 'full_name';

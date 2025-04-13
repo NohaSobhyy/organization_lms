@@ -10,6 +10,7 @@ use App\Models\Api\Follow;
 use App\Models\Role;
 use App\Models\Api\Sale;
 use App\Models\Api\Subscribe;
+use App\Models\Portal;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -366,7 +367,7 @@ class User extends Model implements JWTSubject
 
     public function portal()
     {
-        return $this->hasOne(Portal::class);
+        return $this->belongsTo(Portal::class, 'organ_id');
     }
 
 }
