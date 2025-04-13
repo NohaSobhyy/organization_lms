@@ -93,5 +93,6 @@ class Kernel extends HttpKernel
         'api.identify' => \App\Http\Middleware\Api\CheckApiKey::class,
         'api.level-access' => \App\Http\Middleware\Api\LevelAccess::class,
         'portal.access' => \App\Http\Middleware\CheckPortalAccess::class,
+        'only.superadmin' => \App\Http\Middleware\SuperAdminAccess::class,
     ];
 }

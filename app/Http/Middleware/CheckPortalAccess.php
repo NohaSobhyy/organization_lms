@@ -48,6 +48,14 @@ class CheckPortalAccess
             return response()->json(['error' => 'Portal not found'], 404);
         }
 
+        // Special handling for some routes to allow only Super Admin
+        if ($request->is('*/plans')) {
+            if (!in_array($user->role_id, [2])) {
+                Log::error('Access denied for this route. Role_id: ' . $user->role_id);
+                return response()->json(['error' => 'Access denied for this action'], 403);
+            }
+        }
+
         // Special handling for some routes to allow only Super Admin and Portal Admin
         if ($request->is('*/departments/*/users/role') || $request->is('*/profile/*') || $request->is('*/profile')) {
             if (!in_array($user->role_id, [2, 19])) {

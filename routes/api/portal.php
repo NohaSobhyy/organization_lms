@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Portal\Admin\FeaturesController;
+use App\Http\Controllers\Api\Portal\Admin\PlanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Portal\UserController;
 use App\Http\Controllers\Api\Portal\DepartmentController;
@@ -15,10 +17,20 @@ use App\Http\Controllers\Api\Portal\ProfileController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+// routes for admins
+Route::middleware(['auth:api', 'only.superadmin'])->group(function () {
+    // Plan routes
+    Route::post('/plans', [PlanController::class, 'store']);
+    Route::post('/plans/assign-features', [PlanController::class, 'assignFeatures']);
 
+    // Feature routes
+    Route::apiResource('features', FeaturesController::class);
+    
+
+});
 
 Route::prefix('{company_name}')->group(function () {
-    // Profile 
+    // Profile routes 
     Route::middleware(['auth:api', 'portal.access'])->group(function () {
         Route::get('/profile', [ProfileController::class, 'index']);
         Route::put('/profile/{id}', [ProfileController::class, 'update']);
