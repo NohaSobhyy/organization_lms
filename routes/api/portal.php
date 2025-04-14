@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Portal\Admin\FeaturesController;
+use App\Http\Controllers\Api\Portal\Admin\NotificationController;
 use App\Http\Controllers\Api\Portal\Admin\PlanController;
 use App\Http\Controllers\Api\Portal\BillController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ use App\Http\Controllers\Api\Portal\ProfileController;
 Route::middleware(['auth:api', 'only.superadmin'])->group(function () {
     // Bill route
     Route::get('/bills', [BillController::class, 'getAllBillsAndFeatures']);
+
+    // Notification route
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/{id}', [NotificationController::class, 'show']);
 
     // Plan routes
     Route::post('/plans', [PlanController::class, 'store']);

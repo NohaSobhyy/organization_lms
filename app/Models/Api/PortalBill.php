@@ -9,6 +9,5 @@ class PortalBill extends Model
 {
     use HasFactory;
     protected $table = 'portal_bill';
-
     protected $fillable = ['name', 'bill', 'portal_id'];
 }

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
-
+use App\Models\Role;
 class DepartmentController extends Controller
 {
     /**
@@ -452,16 +452,15 @@ class DepartmentController extends Controller
 
             // Update user role based on team leader flag
             if ($request->boolean('is_team_leader')) {
-                // Set role_id to 17 for team leader
+                // Set role_id 17 for team leader
                 $user->role_id = 17;
             } else {
-                // Set role_id to 18 for employee
+                // Set role_id 18 for employee
                 $user->role_id = 18;
             }
             $user->save();
 
-            // Get the role name from the roles table
-            $role = \App\Models\Role::find($user->role_id);
+            $role = Role::find($user->role_id);
             $user->role_name = $role ? $role->name : 'employee';
             $user->save();
 

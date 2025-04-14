@@ -11,11 +11,13 @@ use App\Models\Role;
 use App\Models\Api\Sale;
 use App\Models\Api\Subscribe;
 use App\Models\Portal;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements JWTSubject
 {
+    use Notifiable;
     public function getJWTIdentifier()
     {
         return $this->getKey();
