@@ -13,8 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('portal_features', function (Blueprint $table) {
+        Schema::create('portal_bill', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('bill');
+            $table->foreignId('portal_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('portal_features');
+        Schema::dropIfExists('portal_bill');
     }
 };
