@@ -20,11 +20,16 @@ class ProfileController extends Controller
         $portals = Portal::when($request->company_name, function ($query) use ($request) {
             $query->where('bussiness_name', $request->company_name);
         })->get();
-
+        $portals->transform(function ($portal) {
+            if ($portal->logo) {
+                $portal->logo = asset('storage/' . $portal->logo);
+            }
+            return $portal;
+        });
         return response()->json([
             'status' => 'success',
             'message' => 'Portal updated successfully.',
-            'data' => $portals
+            'data' => $portals,
         ]);
     }
 
